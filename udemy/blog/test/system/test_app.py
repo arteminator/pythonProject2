@@ -22,3 +22,18 @@ class AppTest(TestCase):
         with patch('builtins.print') as mocked_print:
             app.print_blogs()
             mocked_print.assert_called_with('- Test by Test author (0 posts)')
+
+    def test_ask_create_blog(self):
+        with patch('builtins.input') as mocked_input:
+            mocked_input.side_effect = ('Test', 'Test author')
+            app.ask_create_blog()
+            self.assertIsNotNone(app.blogs.get('Test'))
+
+
+    def test_ask_read_blog(self):
+        blog = Blog('Test', 'Test author')
+        app.blogs = {'Test': blog}
+        with patch('builtins.print', return_value='Test') as mocked_print:
+            with patch('app.print_posts') as mocked_print_posts:
+                app.ask_read_blog()
+                mocked_print_posts.assert_called_with(blog)
